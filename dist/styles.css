@@ -106,7 +106,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 @keyframes bk-scale {
   0%   { transform: scale(1.4); animation-timing-function: var(--ease-p4out); }
   33%  { transform: scale(1.2); animation-timing-function: var(--ease-p4io); }
-  100% { transform: scale(1); }
+  /* settles on the landing photo's own resting scale (1.045, not 1.0) so the
+     handoff holds two pixel-identical frames instead of jumping ~4.5% */
+  100% { transform: scale(1.045); }
 }
 .bk-load-veil { position: absolute; inset: 0; background: var(--ink); opacity: 1; }
 .bk-load.is-armed .bk-load-veil { animation: bk-veilFade 1s .55s var(--e-sine) both; }
@@ -123,8 +125,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   padding-inline: var(--gut); max-width: var(--maxw); margin-inline: auto; z-index: 2; }
 .bk-load-h1 { margin: 0; width: max-content; max-width: 100%;
   font-family: var(--ff-thin); font-weight: 200;
-  font-size: clamp(2.5rem, 9.4vw, 10rem); line-height: .9; letter-spacing: -.045em;
-  text-shadow: 0 2px 50px rgba(11,11,12,.7); }
+  font-size: clamp(2.5rem, 9.4vw, 10rem); line-height: .9; letter-spacing: -.045em; }
+/* NO text-shadow here (unlike .bk-land-h1 below): each .bk-ch is overflow:hidden
+   for the fly-in mask, which clips a blur to that one character's tight box
+   instead of letting it spread — two of those clipped blurs stacked during the
+   opacity crossfade (this copy fading out over the landing's identical copy)
+   is what read as a faint ghost rectangle behind the name at handoff. The
+   landing copy underneath already carries its own shadow permanently, so
+   dropping it here removes the double-up without losing the glow itself. */
 /* Shared with .bk-land-h1 (identical markup, ledger #117): the overlay's
    chars fly in from 1em, the landing's own permanent chars sit settled at 0.
    Sharing one box model means the two renderings are pixel-identical, so the
@@ -229,8 +237,13 @@ body.bk-loading { overflow: hidden; }
 .bk-rot-f.is-on { opacity: 1; }
 .bk-rot-img { width: 100%; height: 100%; object-fit: cover;
   object-position: var(--fx, 50%) 50%; transform: scale(1.045); }
-/* only the visible frame drifts, or five images animate at once */
-.bk-rot-f.is-on .bk-rot-img { animation: bk-drift 11s linear both; }
+/* only the visible frame drifts, or five images animate at once. Gated to
+   AFTER the loader is gone (ledger: the reveal's own image settles on this
+   exact 1.045 scale too — see bk-scale below — so while both layers are on
+   screen together they sit at the identical scale with zero jump; letting
+   the drift run underneath the loader the whole time made it 6% zoomed in
+   by handoff, a visible pop the instant the overlay faded). */
+body:not(.bk-loading) .bk-rot-f.is-on .bk-rot-img { animation: bk-drift 11s linear both; }
 @keyframes bk-drift { from { transform: scale(1.045); } to { transform: scale(1.11); } }
 /* MEASURED against every frame: snow puts the 95th-percentile luminance near
    0.85 under the type, and white needs 0.30 or lower for 3:1. The foot of the
