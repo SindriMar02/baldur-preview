@@ -112,6 +112,9 @@ ${noindex ? '<meta name="robots" content="noindex, nofollow">\n' : ''}
 <meta property="og:locale" content="${c.lang === 'is' ? 'is_IS' : 'en_GB'}">
 <meta property="og:image" content="${ORIGIN}${c.dir}img/g1.webp">
 <link rel="icon" href="${A}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${A}favicon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="${A}favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="${A}apple-touch-icon.png">
 <link rel="preload" href="${A}fonts/FamiljenGrotesk-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="${A}fonts/BasierMono-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="${A}img/g1.webp" fetchpriority="high">
