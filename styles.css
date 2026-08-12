@@ -1,0 +1,422 @@
+/* ==========================================================================
+   BALDUR KRISTJÁNS — Mutual Definition.
+   Every class and keyframe is `bk-` prefixed (no bleed between builds).
+   One idea: a frame that opens on a person and widens until the place
+   explains them. Nothing else on the page competes with it.
+   ========================================================================== */
+
+@font-face { font-family: 'Familjen Grotesk'; src: url('fonts/FamiljenGrotesk-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Familjen Grotesk'; src: url('fonts/FamiljenGrotesk-600.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Familjen Grotesk'; src: url('fonts/FamiljenGrotesk-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Basier Mono'; src: url('fonts/BasierMono-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Archivo Thin'; src: url('fonts/Archivo-200.woff2') format('woff2');
+  font-weight: 200; font-style: normal; font-display: swap; }
+
+:root {
+  /* a press ground: near-black, never pure, so his blacks stay his */
+  --ink:      #0B0B0C;
+  --ink-2:    #131315;
+  --ink-3:    #1C1C1F;
+  --paper:    #ECEAE6;
+  --paper-2:  #B9B6B0;
+  --mute:     #7E7B76;
+  --faint:    #46443F;
+  --hot:      #C8462F;   /* the one accent: the red carpet under the shoe seller */
+
+  --ff: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --ff-reg: 'Basier Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ff-thin: 'Archivo Thin', 'Helvetica Neue', Arial, sans-serif;
+
+  --fs-h1: clamp(2.4rem, 7vw, 7rem);
+  --fs-h2: clamp(1.7rem, 3.2vw, 3.2rem);
+  --fs-lead: clamp(1.0625rem, 1.15vw, 1.25rem);
+  --fs-reg: .6875rem;
+
+  --gut: 20px;
+  --maxw: 1500px;
+  --rule: 1px;
+
+  --e-out:  cubic-bezier(.16, 1, .3, 1);
+  --e-io:   cubic-bezier(.65, .05, .36, 1);
+  --e-sine: cubic-bezier(.61, 1, .88, 1);
+}
+@media (min-width: 620px)  { :root { --gut: 32px; } }
+@media (min-width: 930px)  { :root { --gut: 48px; } }
+@media (min-width: 1280px) { :root { --gut: 64px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overflow-x: clip; }
+body {
+  /* clip, never hidden: overflow-x:hidden makes body a scroll container and
+     silently kills every position:sticky pin inside it (craft ledger #101) */
+  overflow-x: clip;
+  background: var(--ink); color: var(--paper);
+  font-family: var(--ff); font-size: clamp(1rem, 1.02vw, 1.0625rem); line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word; hyphens: auto;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
+
+.reg { font-family: var(--ff-reg); font-size: var(--fs-reg); line-height: 1.5;
+  letter-spacing: .1em; text-transform: uppercase; }
+.bk-wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gut); }
+
+.bk-skip { position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--paper); color: var(--ink); padding: 12px 18px; }
+.bk-skip:focus { left: 8px; top: 8px; }
+.bk-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* ---------------------------------------------------------------- reveal
+   THE ELADIODIESTE DEVICE (memory: eladiodieste-opening-reveal, saved
+   2026-08-05 as THE reference for a premium opening). A slit opens dead
+   centre in the landing's own first photograph as it pushes back from 1.4x,
+   his name flies in char by char, a rule draws, then this overlay hands off
+   to the real landing beneath it — already painted identically, so nothing
+   visibly swaps. Two custom eases stand in for the reference's power4 curves
+   (no GSAP in this build): --ease-p4out for the opening slit, --ease-p4io for
+   everything after. */
+:root {
+  --ease-p4out: cubic-bezier(.06, .98, .32, .98);
+  --ease-p4io:  cubic-bezier(.77, 0, .18, 1);
+}
+.bk-load { position: fixed; inset: 0; z-index: 200; background: var(--ink);
+  overflow: clip; pointer-events: none; }
+.bk-load-clip { position: absolute; inset: 0; overflow: clip;
+  clip-path: inset(100% 100% 100% 100%); }
+.bk-load.is-armed .bk-load-clip { animation: bk-clip 3s both; }
+.bk-load-img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.4); }
+.bk-load.is-armed .bk-load-img { animation: bk-scale 3s both; }
+/* three-stop keyframes, each stop carrying its OWN easing: 0->1s opens the
+   slit (power4.out, matching the reference's "tear from nothing"), 1s->3s
+   opens it to full bleed while the photo settles (power4.inOut) */
+@keyframes bk-clip {
+  0%   { clip-path: inset(100% 100% 100% 100%); animation-timing-function: var(--ease-p4out); }
+  33%  { clip-path: inset(48% 46% 48% 46%);      animation-timing-function: var(--ease-p4io); }
+  100% { clip-path: inset(0% 0% 0% 0%); }
+}
+@keyframes bk-scale {
+  0%   { transform: scale(1.4); animation-timing-function: var(--ease-p4out); }
+  33%  { transform: scale(1.2); animation-timing-function: var(--ease-p4io); }
+  /* settles on the landing photo's own resting scale (1.045, not 1.0) so the
+     handoff holds two pixel-identical frames instead of jumping ~4.5% */
+  100% { transform: scale(1.045); }
+}
+.bk-load-veil { position: absolute; inset: 0; background: var(--ink); opacity: 1; }
+.bk-load.is-armed .bk-load-veil { animation: bk-veilFade 1s .55s var(--e-sine) both; }
+/* the veil is a flat plate over the still-closed slit, so the FIRST thing
+   visible is black, not a flash of un-clipped photo before the slit opens */
+@keyframes bk-veilFade { 0% { opacity: 1; } 30% { opacity: 1; } 100% { opacity: 0; } }
+
+/* top is set live from the landing's own rect (app.js), not a matching magic
+   number: .bk-land sits inside a grid with align-content:end and its own
+   padding, and hand-tuning a bottom offset to match that never stayed exact
+   across viewport sizes. Horizontal alignment already matches by construction
+   (same padding-inline/max-width/margin-inline as .bk-land-in). */
+.bk-load-in { position: absolute; left: 0; right: 0; top: var(--load-y, 0px);
+  padding-inline: var(--gut); max-width: var(--maxw); margin-inline: auto; z-index: 2; }
+.bk-load-h1 { margin: 0; width: max-content; max-width: 100%;
+  font-family: var(--ff-thin); font-weight: 200;
+  font-size: clamp(2.5rem, 9.4vw, 10rem); line-height: .9; letter-spacing: -.045em; }
+/* NO text-shadow here (unlike .bk-land-h1 below): each .bk-ch is overflow:hidden
+   for the fly-in mask, which clips a blur to that one character's tight box
+   instead of letting it spread — two of those clipped blurs stacked during the
+   opacity crossfade (this copy fading out over the landing's identical copy)
+   is what read as a faint ghost rectangle behind the name at handoff. The
+   landing copy underneath already carries its own shadow permanently, so
+   dropping it here removes the double-up without losing the glow itself. */
+/* Shared with .bk-land-h1 (identical markup, ledger #117): the overlay's
+   chars fly in from 1em, the landing's own permanent chars sit settled at 0.
+   Sharing one box model means the two renderings are pixel-identical, so the
+   brief opacity crossfade at handoff overlaps perfectly instead of ghosting
+   two slightly different letter-spacings on top of each other. */
+.bk-ch { display: inline-block; overflow: hidden; vertical-align: bottom; }
+.bk-ch-i { display: inline-block; transform: translateX(0); }
+.bk-load .bk-ch-i { transform: translateX(1em); }
+/* the reference's own stagger-to-duration ratio is tight (10ms stagger over a
+   2s duration): tuned down from an early 18ms/1.4s pass that read as a long
+   diagonal ghost trail across the word instead of one coherent block typing in */
+.bk-load.is-armed .bk-ch-i { animation: bk-charIn 1.3s var(--ease-p4io) both;
+  animation-delay: calc(1.15s + var(--i) * 8ms); }
+@keyframes bk-charIn { to { transform: translateX(0); } }
+.bk-load-rule { margin-top: clamp(16px, 2.6vh, 26px); height: 1px; width: clamp(120px, 18vw, 260px);
+  background: var(--paper); transform-origin: left; transform: scaleX(0); }
+.bk-load.is-armed .bk-load-rule { animation: bk-ruleIn 1.2s 1.7s var(--e-out) both; }
+@keyframes bk-ruleIn { to { transform: scaleX(1); } }
+
+/* the handoff: released 0.8s of 3s before the timeline ends (the reference's
+   own ratio), so the last beat plays under the visitor's first scroll rather
+   than a dead pause; the overlay then crossfades into the identical landing
+   already painted beneath it (ledger #111: a reveal should END BY BECOMING
+   the first composition, not by getting out of the way of it) */
+.bk-load.is-out { animation: bk-loadOut .5s var(--e-sine) forwards; }
+@keyframes bk-loadOut { to { opacity: 0; } }
+body.bk-loading { overflow: hidden; }
+@media (scripting: none) { .bk-load { display: none; } body.bk-loading { overflow: auto; } }
+
+/* ---------------------------------------------------------------- header */
+/* FIXED, not sticky: the landing is full bleed, so the photograph has to run
+   to the very top of the viewport and the header floats over it. Sticky would
+   push the hero down by its own height and drop the register off-screen. */
+.bk-hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 60;
+  background: transparent; border-bottom: var(--rule) solid transparent;
+  transition: background .5s var(--e-sine), border-color .4s var(--e-sine), backdrop-filter .5s var(--e-sine); }
+/* over the landing photograph it is bare type; it only takes a ground once the
+   page has scrolled off the image */
+.bk-hdr.is-stuck { background: color-mix(in srgb, var(--ink) 88%, transparent);
+  backdrop-filter: blur(10px); }
+.bk-hdr.is-stuck { border-bottom-color: color-mix(in srgb, var(--paper) 12%, transparent); }
+/* the landing needs its own top gradient so the bare header type stays legible */
+.bk-rot-veil { z-index: 1; }
+.bk-hdr-in { display: flex; align-items: center; gap: 20px; justify-content: space-between;
+  max-width: var(--maxw); margin-inline: auto; padding: 14px var(--gut); }
+.bk-hdr-home { display: grid; gap: 2px; }
+.bk-hdr-name { font-weight: 600; font-size: 1.0625rem; letter-spacing: -.01em; }
+.bk-hdr-role { color: var(--mute); }
+.bk-hdr-nav { display: none; }
+@media (min-width: 930px) { .bk-hdr-nav { display: block; } }
+.bk-hdr-nav ul { display: flex; gap: clamp(16px, 1.8vw, 32px); list-style: none; padding: 0; }
+.bk-hdr-nav a { font-family: var(--ff-reg); font-size: var(--fs-reg); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--paper-2); padding-block: 6px;
+  border-bottom: var(--rule) solid transparent;
+  transition: color .3s var(--e-sine), border-color .3s var(--e-sine); }
+.bk-hdr-nav a:hover, .bk-hdr-nav a.is-on { color: var(--paper); border-bottom-color: var(--hot); }
+.bk-hdr-end { display: flex; align-items: center; gap: 14px; }
+.bk-hdr-lang { color: var(--mute); }
+.bk-hdr-cta { border: var(--rule) solid color-mix(in srgb, var(--paper) 30%, transparent);
+  padding: 9px 15px; transition: background .3s var(--e-sine), color .3s var(--e-sine); }
+.bk-hdr-cta:hover { background: var(--paper); color: var(--ink); }
+@media (max-width: 929px) { .bk-hdr-cta, .bk-hdr-lang { display: none; } }
+
+.bk-burger { display: grid; gap: 6px; width: 44px; height: 44px; place-content: center; }
+@media (min-width: 930px) { .bk-burger { display: none; } }
+.bk-burger span { display: block; width: 24px; height: 1.5px; background: var(--paper);
+  transition: transform .45s var(--e-out); }
+.bk-burger[aria-expanded="true"] span:first-child { transform: translateY(3.75px) rotate(45deg); }
+.bk-burger[aria-expanded="true"] span:last-child  { transform: translateY(-3.75px) rotate(-45deg); }
+
+.bk-menu { position: fixed; inset: 0; z-index: 55; background: var(--ink);
+  display: grid; align-content: center; padding: 0 var(--gut);
+  opacity: 0; transition: opacity .4s var(--e-sine); }
+.bk-menu.is-open { opacity: 1; }
+.bk-menu-list { list-style: none; padding: 0; display: grid; gap: 6px; }
+.bk-menu-list li { overflow: hidden; }
+.bk-menu-list a { display: block; font-weight: 600; font-size: clamp(2rem, 10vw, 3.4rem);
+  line-height: 1.22; letter-spacing: -.02em;
+  transform: translateY(105%); transition: transform .8s var(--e-out);
+  transition-delay: calc(var(--i) * .06s); }
+.bk-menu.is-open .bk-menu-list a { transform: translateY(0); }
+.bk-menu-foot { position: absolute; left: var(--gut); right: var(--gut); bottom: 34px;
+  display: flex; justify-content: space-between; color: var(--mute); }
+
+/* ---------------------------------------------------------------- reveals */
+.bk-rev > span { display: block; }
+.bk-w { display: inline-block; overflow: hidden; vertical-align: bottom;
+  padding-top: .14em; margin-top: -.14em; }
+.bk-w-i { display: block; transform: translateY(105%);
+  transition: transform 1s var(--e-out); transition-delay: calc(var(--i) * .05s); }
+.bk-rev.is-in .bk-w-i { transform: translateY(0); }
+
+/* ---------------------------------------------------------------- landing
+   ONE full-bleed photograph. His Sisimiut frames are snow, so they are bright
+   almost everywhere; the type therefore lives in a built gradient at the foot
+   of the frame rather than hunting for a dark patch that moves per image. */
+.bk-land { position: relative; min-height: 100svh; overflow: clip;
+  display: grid; align-content: end; }
+.bk-rot { position: absolute; inset: 0; }
+.bk-rot-f { position: absolute; inset: 0; margin: 0; opacity: 0;
+  transition: opacity 1.8s var(--e-sine); }
+.bk-rot-f.is-on { opacity: 1; }
+.bk-rot-img { width: 100%; height: 100%; object-fit: cover;
+  object-position: var(--fx, 50%) 50%; transform: scale(1.045); }
+/* only the visible frame drifts, or five images animate at once. Gated to
+   AFTER the loader is gone (ledger: the reveal's own image settles on this
+   exact 1.045 scale too — see bk-scale below — so while both layers are on
+   screen together they sit at the identical scale with zero jump; letting
+   the drift run underneath the loader the whole time made it 6% zoomed in
+   by handoff, a visible pop the instant the overlay faded). */
+body:not(.bk-loading) .bk-rot-f.is-on .bk-rot-img { animation: bk-drift 11s linear both; }
+@keyframes bk-drift { from { transform: scale(1.045); } to { transform: scale(1.11); } }
+/* MEASURED against every frame: snow puts the 95th-percentile luminance near
+   0.85 under the type, and white needs 0.30 or lower for 3:1. The foot of the
+   frame is built to that; the top three quarters of the photograph are clean. */
+.bk-rot-veil { position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: linear-gradient(180deg,
+    rgba(11,11,12,.42) 0%, rgba(11,11,12,.10) 13%, rgba(11,11,12,.04) 34%,
+    rgba(11,11,12,.30) 52%, rgba(11,11,12,.74) 68%, rgba(11,11,12,.90) 80%,
+    rgba(11,11,12,.95) 100%); }
+
+.bk-land-in { position: relative; z-index: 2; width: 100%; max-width: var(--maxw);
+  margin-inline: auto; padding: 0 var(--gut) clamp(18px, 3vh, 34px); }
+.bk-land-h1 { margin: 0; width: max-content; max-width: 100%;
+  font-family: var(--ff-thin); font-weight: 200;
+  font-size: clamp(2.5rem, 9.4vw, 10rem); line-height: .9; letter-spacing: -.045em;
+  text-shadow: 0 2px 50px rgba(11,11,12,.7); }
+.bk-land-line { margin-top: clamp(12px, 1.8vh, 22px); max-width: 26ch;
+  font-size: clamp(1.05rem, 1.8vw, 1.7rem); line-height: 1.18; letter-spacing: -.02em;
+  color: var(--paper); text-shadow: 0 1px 24px rgba(11,11,12,.8); }
+
+/* the register: what is on screen, and it changes with the frame */
+.bk-reg { position: relative; z-index: 2; width: 100%; max-width: var(--maxw);
+  margin-inline: auto; padding: 0 var(--gut) clamp(22px, 4vh, 46px);
+  display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px 24px; }
+.bk-reg-l { display: grid; gap: 6px; }
+.bk-reg-label { color: var(--paper-2); }
+.bk-reg-i { grid-area: 2 / 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .8s var(--e-sine), transform .8s var(--e-out); }
+.bk-reg-i.is-on { opacity: 1; transform: none; }
+.bk-reg-p { font-weight: 600; font-size: clamp(1rem, 1.4vw, 1.25rem); letter-spacing: -.015em; }
+.bk-reg-c { color: var(--hot); }
+.bk-reg-m { color: var(--paper-2); }
+.bk-rot-t { list-style: none; padding: 0; margin: 0; display: flex; gap: 6px; }
+.bk-rot-tk { width: clamp(26px, 3.6vw, 52px); height: 2px;
+  background: color-mix(in srgb, var(--paper) 32%, transparent); overflow: hidden; }
+.bk-rot-tk span { display: block; height: 100%; width: 100%; background: var(--paper);
+  transform: scaleX(0); transform-origin: left; }
+.bk-rot-tk.is-on span { animation: bk-tick 6.2s linear both; }
+@keyframes bk-tick { to { transform: scaleX(1); } }
+
+/* ---------------------------------------------------------------- sections */
+.bk-me, .bk-sts, .bk-sh, .bk-ab, .bk-ct { padding-block: clamp(60px, 11vh, 140px); }
+.bk-me, .bk-sts, .bk-sh, .bk-ab, .bk-ct { scroll-margin-top: 88px; }
+.bk-eyebrow { color: var(--hot); margin-bottom: 14px; }
+.bk-h2 { font-weight: 600; font-size: var(--fs-h2); line-height: 1.06; letter-spacing: -.03em; }
+.bk-lead { margin-top: 20px; font-size: var(--fs-lead); color: var(--paper-2); max-width: 58ch; }
+
+.bk-me-q { margin-top: clamp(26px, 3.6vh, 44px); padding-left: clamp(16px, 1.6vw, 26px);
+  border-left: 2px solid var(--hot); max-width: 62ch; }
+.bk-me-q p { font-size: clamp(1.15rem, 1.9vw, 1.75rem); line-height: 1.34; letter-spacing: -.015em; }
+.bk-me-q figcaption { margin-top: 12px; color: var(--mute); }
+.bk-me-cue { margin-top: clamp(30px, 5vh, 60px); color: var(--mute);
+  display: flex; align-items: center; gap: 12px; }
+.bk-me-cue::after { content: ''; flex: 1; height: var(--rule);
+  background: color-mix(in srgb, var(--paper) 18%, transparent); }
+
+/* ---- THE SIGNATURE: the widening frame --------------------------------
+   --fp is written by the scroll loop, 0 while the frame is arriving and 1
+   once it has fully entered. --cl/--cr are the clip insets, computed from
+   the subject's own position so the tight window is centred ON THE PERSON,
+   never on the middle of the photograph. */
+.bk-fr-l { margin-top: clamp(30px, 5vh, 60px); display: grid; gap: clamp(64px, 12vh, 150px); }
+.bk-fr { --fp: 0; --cl: 27%; --cr: 27%; margin: 0; }
+.bk-fr-win {
+  height: clamp(56svh, 74svh, 88svh); overflow: clip; background: var(--ink-2);
+  clip-path: inset(0 var(--cr) 0 var(--cl));
+}
+.bk-fr-img {
+  width: 100%; height: 100%; object-fit: cover;
+  object-position: calc(var(--fx, 50) * 1%) calc(var(--fy, 50) * 1%);
+  /* pulls back from the subject to the whole place. 1.55 on a 2040px source at
+     full width still resolves above 1x, so no pixel is ever invented. */
+  transform: scale(calc(1.55 - var(--fp) * .55));
+  will-change: transform;
+}
+.bk-fr-cap { margin-top: 16px; padding-inline: var(--gut); max-width: var(--maxw);
+  margin-inline: auto; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.bk-fr-who { font-weight: 600; font-size: clamp(1.15rem, 2vw, 1.75rem); letter-spacing: -.02em; }
+/* the second half of the caption arrives with the environment it names */
+.bk-fr-what { font-size: clamp(1.15rem, 2vw, 1.75rem); letter-spacing: -.02em;
+  color: var(--paper-2);
+  opacity: clamp(0, calc((var(--fp) - .45) * 3), 1);
+  transform: translateX(calc((1 - var(--fp)) * -10px));
+}
+.bk-fr-meta { margin-left: auto; color: var(--mute); }
+.bk-fr-meta i { font-style: normal; color: var(--faint); }
+
+/* ---------------------------------------------------------------- stories */
+.bk-st-l { margin-top: clamp(30px, 4.6vh, 56px); display: grid; gap: clamp(30px, 4vh, 54px); }
+@media (min-width: 930px) { .bk-st-l { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(34px, 3.4vw, 64px); } }
+.bk-st { padding-top: 22px; border-top: var(--rule) solid color-mix(in srgb, var(--paper) 16%, transparent); }
+.bk-st-meta { color: var(--mute); display: flex; align-items: baseline; gap: 12px; }
+.bk-st-no { color: var(--faint); }
+.bk-st-h { margin-top: 10px; font-weight: 600; font-size: clamp(1.3rem, 2.1vw, 1.9rem);
+  line-height: 1.1; letter-spacing: -.025em; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+.bk-st-alt { font-style: normal; font-weight: 400; font-size: .68em; color: var(--mute); }
+.bk-st-b { margin-top: 14px; color: var(--paper-2); max-width: 52ch; }
+
+/* ---------------------------------------------------------------- contact sheet */
+.bk-sh-l { list-style: none; padding: var(--gut) var(--gut) 0; margin: clamp(26px, 4vh, 46px) auto 0;
+  max-width: var(--maxw);
+  display: grid; gap: clamp(14px, 1.4vw, 26px);
+  grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 620px)  { .bk-sh-l { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .bk-sh-l { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.bk-sh-a { display: grid; gap: 8px; }
+.bk-sh-m { display: block; aspect-ratio: 3 / 2; overflow: clip; background: var(--ink-2); }
+.bk-sh-img { width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) contrast(1.04); opacity: .82;
+  transition: filter .6s var(--e-sine), opacity .6s var(--e-sine), transform .9s var(--e-out); }
+.bk-sh-a:hover .bk-sh-img, .bk-sh-a:focus-visible .bk-sh-img {
+  filter: none; opacity: 1; transform: scale(1.04); }
+.bk-sh-t { font-weight: 600; font-size: .9375rem; letter-spacing: -.012em; }
+.bk-sh-c { color: var(--mute); }
+
+/* ---------------------------------------------------------------- about */
+.bk-ab { background: var(--ink-2); }
+.bk-fa { margin-top: clamp(26px, 3.6vh, 44px); max-width: 72ch; }
+.bk-fa-r { display: grid; gap: 4px; padding-block: 15px;
+  border-bottom: var(--rule) solid color-mix(in srgb, var(--paper) 12%, transparent); }
+@media (min-width: 620px) { .bk-fa-r { grid-template-columns: 190px minmax(0, 1fr); gap: 20px; align-items: baseline; } }
+.bk-fa-r dt { color: var(--mute); }
+.bk-fa-r dd { color: var(--paper-2); }
+.bk-ab-course { margin-top: clamp(24px, 3.4vh, 38px); color: var(--paper-2); max-width: 62ch; }
+.bk-ab-course .reg { display: block; color: var(--hot); margin-bottom: 6px; }
+.bk-ab-course .bk-ib { margin-left: 10px; }
+
+/* ---------------------------------------------------------------- contact */
+.bk-ct-l { margin-top: clamp(26px, 3.6vh, 44px); max-width: 62ch; }
+.bk-ct-r { display: grid; gap: 4px; padding-block: 15px;
+  border-bottom: var(--rule) solid color-mix(in srgb, var(--paper) 14%, transparent); }
+@media (min-width: 620px) { .bk-ct-r { grid-template-columns: 190px minmax(0, 1fr); gap: 20px; align-items: baseline; } }
+.bk-ct-r dt { color: var(--mute); }
+.bk-ct-r a { border-bottom: var(--rule) solid color-mix(in srgb, var(--paper) 34%, transparent); }
+.bk-ct-r a:hover { color: var(--hot); border-bottom-color: var(--hot); }
+.bk-ct-btns { margin-top: clamp(26px, 3.6vh, 40px); display: flex; flex-wrap: wrap; gap: 16px 22px; align-items: center; }
+
+.bk-ib { display: inline-block; position: relative; padding-bottom: 3px;
+  font-family: var(--ff-reg); font-size: var(--fs-reg); letter-spacing: .1em; text-transform: uppercase; }
+.bk-ib::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: currentColor; transform-origin: right; transition: transform .45s var(--e-out); }
+.bk-ib:hover::after { transform-origin: left; transform: scaleX(0); }
+.bk-ib--solid { background: var(--hot); color: #fff; padding: 12px 20px; }
+.bk-ib--solid::after { content: none; }
+.bk-ib--solid:hover { background: var(--paper); color: var(--ink); }
+
+/* ---------------------------------------------------------------- footer */
+.bk-ft { padding-block: clamp(40px, 6vh, 68px);
+  border-top: var(--rule) solid color-mix(in srgb, var(--paper) 12%, transparent); }
+.bk-ft-in { display: grid; gap: 24px; }
+@media (min-width: 930px) { .bk-ft-in { grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 44px; } }
+.bk-ft-txt p { color: var(--paper-2); }
+.bk-ft-end { color: var(--mute); letter-spacing: .05em; text-transform: none; font-size: .75rem; line-height: 1.7; }
+.bk-ft-note { margin-top: 6px; color: var(--faint); }
+
+/* ---------------------------------------------------------------- a11y */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .bk-load { display: none; }
+  .bk-rot-f.is-on .bk-rot-img { animation: none; transform: scale(1.02); }
+  .bk-rot-tk.is-on span { animation: none; transform: scaleX(1); }
+  .bk-rot-f, .bk-reg-i { transition: none; }
+  .bk-w-i { transform: none; transition: none; }
+  .bk-fr { --fp: 1; --cl: 0%; --cr: 0%; }
+  .bk-fr-img { transform: none; }
+  .bk-fr-what { opacity: 1; transform: none; }
+  .bk-menu-list a { transform: none; transition: none; }
+  .bk-sh-img { transition: none; }
+}
+@media (scripting: none) {
+  .bk-w-i { transform: none; }
+  .bk-fr { --fp: 1; --cl: 0%; --cr: 0%; }
+  .bk-fr-img { transform: none; }
+  .bk-fr-what { opacity: 1; transform: none; }
+}
