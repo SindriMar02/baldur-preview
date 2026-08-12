@@ -1,0 +1,32 @@
+{
+ "k-green": {
+  "label": "Sófinn",
+  "fx": 40,
+  "fy": 55,
+  "src": "https://payload.cargocollective.com/1/10/331945/6649590/RaggaWest_ZP7A0506_o.jpg"
+ },
+ "k-laundry": {
+  "label": "Þvottahúsið",
+  "fx": 50,
+  "fy": 45,
+  "src": "https://payload.cargocollective.com/1/10/331945/6649590/RaggaWest_ZP7A2238_o.jpg"
+ },
+ "k-office": {
+  "label": "Skrifstofan",
+  "fx": 82,
+  "fy": 55,
+  "src": "https://payload.cargocollective.com/1/10/331945/6649590/RaggaWest_ZP7A8212_o.jpg"
+ },
+ "k-bench": {
+  "label": "Glugginn",
+  "fx": 55,
+  "fy": 62,
+  "src": "https://payload.cargocollective.com/1/10/331945/6649590/RaggaWest_ZP7A9019_o.jpg"
+ },
+ "k-yard": {
+  "label": "Garðurinn",
+  "fx": 80,
+  "fy": 48,
+  "src": "https://payload.cargocollective.com/1/10/331945/6649590/RaggaWest_ZP7A9803_o.jpg"
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "g1": {
+  "src": "https://payload.cargocollective.com/1/10/331945/8421123/21_Sisimiut6_ZP7A6830_1020_2x.jpg",
+  "file": "21_Sisimiut6_ZP7A6830_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "kb": 208
+ },
+ "g2": {
+  "src": "https://payload.cargocollective.com/1/10/331945/8421123/02_Sisimiut1_ZP7A1924_1020_2x.jpg",
+  "file": "02_Sisimiut1_ZP7A1924_1020_2x.jpg",
+  "w": 2040,
+  "h": 1169,
+  "kb": 161
+ },
+ "g3": {
+  "src": "https://payload.cargocollective.com/1/10/331945/8421123/10_Sisimiut4_ZP7A2506_1020_2x.jpg",
+  "file": "10_Sisimiut4_ZP7A2506_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "kb": 249
+ },
+ "g4": {
+  "src": "https://payload.cargocollective.com/1/10/331945/8421123/11_Sisimiut4_ZP7A4282_1020_2x.jpg",
+  "file": "11_Sisimiut4_ZP7A4282_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "kb": 372
+ },
+ "g5": {
+  "src": "https://payload.cargocollective.com/1/10/331945/8421123/17_Sisimiut7_ZP7A7728_1020_2x.jpg",
+  "file": "17_Sisimiut7_ZP7A7728_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "kb": 255
+ }
+}

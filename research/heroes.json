@@ -1,0 +1,42 @@
+{
+ "h-shoes": {
+  "src": "https://payload.cargocollective.com/1/10/331945/5083117/09.12.25_MumbaiIndia_3091_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "date": "2009-12-25",
+  "place": "MumbaiIndia",
+  "kb": 601
+ },
+ "h-brass": {
+  "src": "https://payload.cargocollective.com/1/10/331945/5083117/09.12.25_MumbaiIndia_3337_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "date": "2009-12-25",
+  "place": "MumbaiIndia",
+  "kb": 651
+ },
+ "h-fabric": {
+  "src": "https://payload.cargocollective.com/1/10/331945/5083117/09.12.28_MumbaiIndia_9777_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "date": "2009-12-28",
+  "place": "MumbaiIndia",
+  "kb": 464
+ },
+ "h-pots": {
+  "src": "https://payload.cargocollective.com/1/10/331945/5083117/10.01.25_Kerala_Backwaters_9803_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "date": "2010-01-25",
+  "place": "Kerala",
+  "kb": 426
+ },
+ "h-dhobi": {
+  "src": "https://payload.cargocollective.com/1/10/331945/5083117/10.02.08_Mumbai_8392_1020_2x.jpg",
+  "w": 2040,
+  "h": 1360,
+  "date": "2010-02-08",
+  "place": "Mumbai",
+  "kb": 606
+ }
+}
