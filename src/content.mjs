@@ -1,3 +1,8 @@
+import { sndrCredit } from '../../_tools/sndr-credit.mjs';
+
+/* one definition of the credit and the disclaimer, shared by every build */
+const CREDIT = sndrCredit({ nefnifall: 'Baldur Kristjánsson', eignarfall: 'Baldurs Kristjánssonar' });
+
 // BALDUR KRISTJÁNS — all copy, is + en.
 // Every biographical fact, project story, client tag, place and date below comes
 // from baldurkristjans.is (his own About page, his own project pages, and the
@@ -188,8 +193,7 @@ export const COPY = {
     },
     footer: {
       lines: ['Baldur Kristjáns', 'Ljósmyndari, Reykjavík', 'baldur@baldurkristjans.is'],
-      credit: 'Hugmynd að endurhönnun. SNDR Studio.',
-      note: 'Óopinber hugmyndavinna, ekki í eigu eða á vegum Baldurs Kristjánssonar.',
+      ...CREDIT.is,
     },
   },
 
@@ -251,8 +255,7 @@ export const COPY = {
     },
     footer: {
       lines: ['Baldur Kristjáns', 'Photographer, Reykjavík', 'baldur@baldurkristjans.is'],
-      credit: 'Redesign concept. SNDR Studio.',
-      note: 'An unofficial concept, not owned by or affiliated with Baldur Kristjánsson.',
+      ...CREDIT.en,
     },
   },
 };
